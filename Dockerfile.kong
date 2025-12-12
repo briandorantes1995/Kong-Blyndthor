@@ -34,5 +34,5 @@ RUN chown -R kong:kong /kong-config
 
 # Mantener como root para el entrypoint (cambiará a kong después)
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["kong", "docker-start"]
+CMD ["kong", "start"]
 
