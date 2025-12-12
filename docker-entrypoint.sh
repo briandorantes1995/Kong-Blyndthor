@@ -60,13 +60,38 @@ fi
 rm -f /usr/local/kong/*.sock 2>/dev/null || true
 
 # Cambiar al usuario kong para ejecutar Kong
-# Intentar diferentes métodos según lo disponible
+# Kong start inicia en modo daemon, necesitamos mantener el contenedor vivo
 if command -v gosu >/dev/null 2>&1; then
-    exec gosu kong "$@"
+    gosu kong "$@" || exit $?
+    # Mantener el contenedor vivo monitoreando el proceso de Kong
+    echo "✅ Kong iniciado, monitoreando proceso..."
+    while true; do
+        if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
+            echo "⚠️  Proceso de Kong no encontrado, saliendo..."
+            exit 1
+        fi
+        sleep 10
+    done
 elif command -v su-exec >/dev/null 2>&1; then
-    exec su-exec kong "$@"
+    su-exec kong "$@" || exit $?
+    echo "✅ Kong iniciado, monitoreando proceso..."
+    while true; do
+        if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
+            echo "⚠️  Proceso de Kong no encontrado, saliendo..."
+            exit 1
+        fi
+        sleep 10
+    done
 else
-    # Fallback: usar su (menos seguro pero funciona)
-    exec su -s /bin/sh kong -c "exec \"\$@\"" -- "$@"
+    # Fallback: usar su
+    su -s /bin/sh kong -c "$*" || exit $?
+    echo "✅ Kong iniciado, monitoreando proceso..."
+    while true; do
+        if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
+            echo "⚠️  Proceso de Kong no encontrado, saliendo..."
+            exit 1
+        fi
+        sleep 10
+    done
 fi
 
