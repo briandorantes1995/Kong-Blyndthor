@@ -1,1 +1,27 @@
 .env
+.env.local
+.env.*.local
+
+# Archivos generados (se incluyen en repo para Coolify)
+# kong.yaml - Se genera en build, pero se incluye para Coolify
+
+# Coolify
+.coolify/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/

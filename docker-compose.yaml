@@ -4,13 +4,30 @@ services:
   kong:
     image: kong:3.5
     restart: always
+    container_name: kong-gateway
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yaml
       KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+      KONG_LOG_LEVEL: info
+      KONG_NGINX_WORKER_PROCESSES: auto
       INTERNAL_SECRET: ${INTERNAL_SECRET}
       JWT_SECRET: ${JWT_SECRET}
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Proxy
+      - "8001:8001"  # Admin API (opcional, para debugging)
     volumes:
       - ./kong.yaml:/etc/kong/kong.yaml:ro
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - kong-network
+
+networks:
+  kong-network:
+    driver: bridge

@@ -2,5 +2,5 @@ consumers:
   - username: app
     custom_id: main-app
     jwt_secrets:
-      - key: issuer-app
+      - key: dawn-backend
         secret: ${JWT_SECRET}

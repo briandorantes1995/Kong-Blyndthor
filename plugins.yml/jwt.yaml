@@ -1,6 +1,24 @@
 plugins:
+  # JWT para rutas protegidas de api-main (excluye /auth y /public)
   - name: jwt
     service: api-main
+    route: api-main
+    config:
+      key_claim_name: iss
+      claims_to_verify:
+        - exp
+  # JWT para ruta /sse (excluye /metrics)
+  - name: jwt
+    service: sse
+    route: sse
+    config:
+      key_claim_name: iss
+      claims_to_verify:
+        - exp
+  # JWT para ruta /ws
+  - name: jwt
+    service: ws
+    route: ws
     config:
       key_claim_name: iss
       claims_to_verify:

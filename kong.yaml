@@ -1,0 +1,92 @@
+_format_version: '3.0'
+services:
+- name: api-public
+  url: http://api-main:3000
+  routes:
+  - name: api-public
+    paths:
+    - /api/public
+    strip_path: true
+- name: api-main
+  url: http://api-main:3000
+  routes:
+  - name: api-main
+    paths:
+    - /api
+    strip_path: true
+- name: auth
+  url: http://api-main:3000
+  routes:
+  - name: auth
+    paths:
+    - /auth
+    strip_path: false
+- name: sse
+  url: http://sse-service:5000
+  routes:
+  - name: sse
+    paths:
+    - /sse
+    strip_path: true
+  - name: sse-metrics
+    paths:
+    - /metrics
+    strip_path: true
+- name: ws
+  url: http://ws-service:4000
+  routes:
+  - name: ws
+    paths:
+    - /ws
+    strip_path: true
+consumers:
+- username: app
+  custom_id: main-app
+  jwt_secrets:
+  - key: dawn-backend
+    secret: ${JWT_SECRET}
+plugins:
+- name: cors
+  service: api-main
+  config:
+    origins:
+    - https://tuweb.com
+    methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    headers:
+    - Authorization
+    - Content-Type
+    credentials: true
+- name: request-transformer
+  config:
+    add:
+      headers:
+      - 'X-Internal-Auth: ${INTERNAL_SECRET}'
+- name: jwt
+  service: api-main
+  route: api-main
+  config:
+    key_claim_name: iss
+    claims_to_verify:
+    - exp
+- name: jwt
+  service: sse
+  route: sse
+  config:
+    key_claim_name: iss
+    claims_to_verify:
+    - exp
+- name: jwt
+  service: ws
+  route: ws
+  config:
+    key_claim_name: iss
+    claims_to_verify:
+    - exp
+- name: rate-limiting
+  config:
+    minute: 200
+    policy: local
