@@ -151,23 +151,21 @@ Este proyecto está configurado para desplegarse automáticamente con **Coolify*
 
 ### Configuración Automática
 
-Cada vez que hagas push a tu repositorio:
+Cada push a tu repositorio:
 1. ✅ Coolify detecta los cambios
-2. ✅ Ejecuta el script de build (`.coolify/build.sh`)
-3. ✅ Genera automáticamente `kong.yaml`
-4. ✅ Valida la configuración
-5. ✅ Despliega con Docker Compose
+2. ✅ Ejecuta `.coolify/build.sh` (genera `kong.yaml`)
+3. ✅ Despliega con Docker Compose
+4. ✅ Kong se reinicia con la nueva configuración
 
-### Pasos para Configurar
+### Configuración Rápida
 
-Ver la guía completa en **[COOLIFY_SETUP.md](COOLIFY_SETUP.md)**
+1. **Crear aplicación** en Coolify (tipo: Docker Compose)
+2. **Conectar repositorio** Git
+3. **Variables de entorno**:
+   - `INTERNAL_SECRET`
+   - `JWT_SECRET`
+4. **Activar Auto-Deploy**
+5. **Configurar webhook** (opcional)
 
-**Resumen rápido:**
-1. Crea una aplicación Docker Compose en Coolify
-2. Conecta tu repositorio Git
-3. Configura las variables de entorno (`INTERNAL_SECRET`, `JWT_SECRET`)
-4. Activa Auto-Deploy
-5. Configura el webhook en tu repositorio
-
-¡Listo! Cada push generará y desplegará automáticamente. 🎉
+Ver **[COOLIFY_SETUP.md](COOLIFY_SETUP.md)** para detalles completos.
 
