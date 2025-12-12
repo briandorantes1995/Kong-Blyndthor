@@ -1,0 +1,6 @@
+consumers:
+  - username: app
+    custom_id: main-app
+    jwt_secrets:
+      - key: issuer-app
+        secret: ${JWT_SECRET}

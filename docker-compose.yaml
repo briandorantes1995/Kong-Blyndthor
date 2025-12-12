@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  kong:
+    image: kong:3.5
+    restart: always
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yaml
+      KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      INTERNAL_SECRET: ${INTERNAL_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kong.yaml:/etc/kong/kong.yaml:ro

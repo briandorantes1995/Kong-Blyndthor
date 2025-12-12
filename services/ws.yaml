@@ -1,0 +1,7 @@
+services:
+  - name: ws
+    url: http://ws-service:4000
+    routes:
+      - name: ws
+        paths: ["/ws"]
+        strip_path: true

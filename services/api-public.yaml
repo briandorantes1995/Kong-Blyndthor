@@ -1,0 +1,7 @@
+services:
+  - name: api-public
+    url: http://api-main:3000
+    routes:
+      - name: api-public
+        paths: ["/api/public"]
+        strip_path: true

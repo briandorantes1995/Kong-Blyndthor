@@ -1,0 +1,7 @@
+services:
+  - name: sse
+    url: http://sse-service:5000
+    routes:
+      - name: sse
+        paths: ["/sse"]
+        strip_path: true

@@ -1,0 +1,6 @@
+plugins:
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - "X-Internal-Auth: ${INTERNAL_SECRET}"

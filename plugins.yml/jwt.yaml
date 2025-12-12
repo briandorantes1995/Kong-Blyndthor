@@ -1,0 +1,7 @@
+plugins:
+  - name: jwt
+    service: api-main
+    config:
+      key_claim_name: iss
+      claims_to_verify:
+        - exp
