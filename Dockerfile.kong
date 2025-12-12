@@ -4,9 +4,12 @@ FROM kong:3.5
 # Kong 3.5 puede usar Alpine o Debian, detectar automáticamente
 USER root
 
-# Intentar instalar con apt-get primero (Debian/Ubuntu)
-RUN (apt-get update && apt-get install -y python3 python3-pip && apt-get clean && rm -rf /var/lib/apt/lists/*) || \
-    (apk add --no-cache python3 py3-pip) || \
+# Instalar Python y gosu (alternativa a su-exec para Debian)
+RUN (apt-get update && \
+     apt-get install -y python3 python3-pip gosu && \
+     apt-get clean && \
+     rm -rf /var/lib/apt/lists/*) || \
+    (apk add --no-cache python3 py3-pip su-exec) || \
     (echo "Error: No se pudo instalar Python3" && exit 1)
 
 # Crear directorio de trabajo

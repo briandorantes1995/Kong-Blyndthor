@@ -52,5 +52,13 @@ echo "✅ Configuración generada y copiada a /etc/kong/kong.yaml"
 echo "📄 Tamaño del archivo: $(wc -l < /etc/kong/kong.yaml) líneas"
 
 # Cambiar al usuario kong para ejecutar Kong
-exec su-exec kong "$@"
+# Intentar diferentes métodos según lo disponible
+if command -v gosu >/dev/null 2>&1; then
+    exec gosu kong "$@"
+elif command -v su-exec >/dev/null 2>&1; then
+    exec su-exec kong "$@"
+else
+    # Fallback: usar su (menos seguro pero funciona)
+    exec su -s /bin/sh kong -c "exec \"\$@\"" -- "$@"
+fi
 
