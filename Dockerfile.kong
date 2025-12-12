@@ -1,0 +1,30 @@
+FROM kong:3.5
+
+# Instalar Python y dependencias (Kong usa Alpine)
+USER root
+RUN apk add --no-cache python3 py3-pip
+
+# Crear directorio de trabajo
+WORKDIR /kong-config
+
+# Copiar scripts de generación
+COPY generate-kong-config.py .
+COPY requirements.txt .
+COPY consumers/ ./consumers/
+COPY services/ ./services/
+COPY plugins.yml/ ./plugins.yml/
+
+# Instalar dependencias Python
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Script de entrypoint que genera la configuración antes de iniciar Kong
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# Asegurar permisos correctos
+RUN chown -R kong:kong /kong-config
+
+# Mantener como root para el entrypoint (cambiará a kong después)
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["kong", "docker-start"]
+

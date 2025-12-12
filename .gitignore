@@ -2,11 +2,14 @@
 .env.local
 .env.*.local
 
-# Archivos generados (se incluyen en repo para Coolify)
-# kong.yaml - Se genera en build, pero se incluye para Coolify
+# Archivos generados
+kong.yaml
 
 # Coolify
 .coolify/.env
+
+# Docker
+.dockerignore
 
 # Python
 __pycache__/

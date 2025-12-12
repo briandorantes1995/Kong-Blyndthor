@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   kong:
-    image: kong:3.5
+    build:
+      context: .
+      dockerfile: Dockerfile.kong
     restart: always
     container_name: kong-gateway
     environment:
@@ -17,8 +19,10 @@ services:
     ports:
       - "8000:8000"  # Proxy
       - "8001:8001"  # Admin API (opcional, para debugging)
-    volumes:
-      - ./kong.yaml:/etc/kong/kong.yaml:ro
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
     healthcheck:
       test: ["CMD", "kong", "health"]
       interval: 30s
