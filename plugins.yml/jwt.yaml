@@ -7,6 +7,13 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+      run_on_preflight: false
+      header_names:
+        - Authorization
+      uri_param_names:
+        - jwt
+      cookie_names:
+        - jwt
   # JWT para ruta /sse (excluye /metrics)
   - name: jwt
     service: sse
@@ -15,6 +22,13 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+      run_on_preflight: false
+      header_names:
+        - Authorization
+      uri_param_names:
+        - jwt
+      cookie_names:
+        - jwt
   # JWT para ruta /ws
   - name: jwt
     service: ws
@@ -23,3 +37,10 @@ plugins:
       key_claim_name: iss
       claims_to_verify:
         - exp
+      run_on_preflight: false
+      header_names:
+        - Authorization
+      uri_param_names:
+        - jwt
+      cookie_names:
+        - jwt

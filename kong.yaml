@@ -19,8 +19,8 @@ services:
   routes:
   - name: auth
     paths:
-    - /auth
-    strip_path: false
+    - /api/auth
+    strip_path: true
 - name: sse
   url: http://sse-service:5000
   routes:
@@ -33,7 +33,7 @@ services:
     - /metrics
     strip_path: true
 - name: ws
-  url: http://ws-service:4000
+  url: http://h8g4kws0880k4gowswwgwg88.138.197.203.18.sslip.io
   routes:
   - name: ws
     paths:
@@ -72,6 +72,13 @@ plugins:
     key_claim_name: iss
     claims_to_verify:
     - exp
+    run_on_preflight: false
+    header_names:
+    - Authorization
+    uri_param_names:
+    - jwt
+    cookie_names:
+    - jwt
 - name: jwt
   service: sse
   route: sse
@@ -79,6 +86,13 @@ plugins:
     key_claim_name: iss
     claims_to_verify:
     - exp
+    run_on_preflight: false
+    header_names:
+    - Authorization
+    uri_param_names:
+    - jwt
+    cookie_names:
+    - jwt
 - name: jwt
   service: ws
   route: ws
@@ -86,6 +100,13 @@ plugins:
     key_claim_name: iss
     claims_to_verify:
     - exp
+    run_on_preflight: false
+    header_names:
+    - Authorization
+    uri_param_names:
+    - jwt
+    cookie_names:
+    - jwt
 - name: rate-limiting
   config:
     minute: 200
