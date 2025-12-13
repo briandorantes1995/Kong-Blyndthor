@@ -7,4 +7,4 @@ services:
         strip_path: true
       - name: socketio
         paths: ["/socket.io"]
-        strip_path: false
+        strip_path: true

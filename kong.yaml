@@ -42,7 +42,7 @@ services:
   - name: socketio
     paths:
     - /socket.io
-    strip_path: false
+    strip_path: true
 consumers:
 - username: app
   custom_id: main-app
