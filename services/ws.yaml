@@ -5,3 +5,6 @@ services:
       - name: ws
         paths: ["/ws"]
         strip_path: true
+      - name: socketio
+        paths: ["/socket.io"]
+        strip_path: false

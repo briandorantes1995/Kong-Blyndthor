@@ -6,7 +6,7 @@ services:
   - name: api-public
     paths:
     - /api/public
-    strip_path: true
+    strip_path: false
 - name: api-main
   url: http://api-main:3000
   routes:
@@ -20,7 +20,7 @@ services:
   - name: auth
     paths:
     - /api/auth
-    strip_path: true
+    strip_path: false
 - name: sse
   url: http://sse-service:5000
   routes:
@@ -39,12 +39,16 @@ services:
     paths:
     - /ws
     strip_path: true
+  - name: socketio
+    paths:
+    - /socket.io
+    strip_path: false
 consumers:
 - username: app
   custom_id: main-app
   jwt_secrets:
   - key: dawn-backend
-    secret: ${JWT_SECRET}
+    secret: super-secreto-largo-y-random
 plugins:
 - name: cors
   service: api-main
@@ -61,10 +65,11 @@ plugins:
     - Content-Type
     credentials: true
 - name: request-transformer
+  service: api-main
   config:
     add:
       headers:
-      - 'X-Internal-Auth: ${INTERNAL_SECRET}'
+      - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
 - name: jwt
   service: api-main
   route: api-main
@@ -96,6 +101,20 @@ plugins:
 - name: jwt
   service: ws
   route: ws
+  config:
+    key_claim_name: iss
+    claims_to_verify:
+    - exp
+    run_on_preflight: false
+    header_names:
+    - Authorization
+    uri_param_names:
+    - jwt
+    cookie_names:
+    - jwt
+- name: jwt
+  service: ws
+  route: socketio
   config:
     key_claim_name: iss
     claims_to_verify:

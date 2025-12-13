@@ -1,5 +1,8 @@
 plugins:
+  # Aplicar header interno solo a api-main (rutas protegidas)
+  # api-public y auth no necesitan este header
   - name: request-transformer
+    service: api-main
     config:
       add:
         headers:

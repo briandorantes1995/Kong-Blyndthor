@@ -4,4 +4,4 @@ services:
     routes:
       - name: api-public
         paths: ["/api/public"]
-        strip_path: true
+        strip_path: false

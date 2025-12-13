@@ -4,4 +4,4 @@ services:
     routes:
       - name: auth
         paths: ["/api/auth"]
-        strip_path: true
+        strip_path: false
