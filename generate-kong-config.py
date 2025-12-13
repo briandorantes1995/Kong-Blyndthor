@@ -7,7 +7,49 @@ Combina servicios, consumidores y plugins en un único archivo declarativo.
 import os
 import yaml
 import sys
+import re
 from pathlib import Path
+
+def load_env_file(env_file_path):
+    """Carga variables de un archivo .env si existe."""
+    env_vars = {}
+    if env_file_path.exists():
+        try:
+            with open(env_file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        # Eliminar comillas si existen
+                        value = value.strip('"').strip("'")
+                        env_vars[key.strip()] = value
+        except Exception as e:
+            print(f"⚠️  Advertencia: No se pudo leer {env_file_path}: {e}")
+    return env_vars
+
+def expand_env_vars(obj, env_vars=None):
+    """Expande variables de entorno en el formato ${VAR_NAME} de forma recursiva."""
+    if isinstance(obj, dict):
+        return {key: expand_env_vars(value, env_vars) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [expand_env_vars(item, env_vars) for item in obj]
+    elif isinstance(obj, str):
+        # Buscar patrones ${VAR_NAME} y reemplazarlos
+        pattern = r'\$\{([^}]+)\}'
+        def replace_var(match):
+            var_name = match.group(1)
+            # Primero buscar en variables de entorno del sistema
+            value = os.getenv(var_name)
+            # Si no existe y tenemos env_vars, buscar ahí
+            if value is None and env_vars:
+                value = env_vars.get(var_name)
+            if value is None:
+                print(f"⚠️  Advertencia: Variable de entorno {var_name} no está definida")
+                return match.group(0)  # Mantener el original si no existe
+            return value
+        return re.sub(pattern, replace_var, obj)
+    else:
+        return obj
 
 def load_yaml_file(file_path):
     """Carga un archivo YAML y retorna su contenido."""
@@ -40,6 +82,10 @@ def generate_kong_config():
     """Genera el archivo kong.yaml combinando todos los archivos de configuración."""
     base_dir = Path(__file__).parent
     output_file = base_dir / "kong.yaml"
+    
+    # Cargar variables de entorno desde .env si existe
+    env_file = base_dir / ".env"
+    env_vars = load_env_file(env_file)
     
     # Estructura base del archivo Kong
     kong_config = {
@@ -82,6 +128,26 @@ def generate_kong_config():
     
     if not kong_config["consumers"]:
         print("⚠️  Advertencia: No se encontraron consumidores")
+    
+    # Expandir variables de entorno en la configuración
+    print("🔧 Expandiendo variables de entorno...")
+    kong_config = expand_env_vars(kong_config, env_vars)
+    
+    # Verificar que las variables críticas fueron expandidas
+    def check_critical_vars(obj, path=""):
+        """Verifica que no queden variables sin expandir críticas."""
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                check_critical_vars(value, f"{path}.{key}" if path else key)
+        elif isinstance(obj, list):
+            for idx, item in enumerate(obj):
+                check_critical_vars(item, f"{path}[{idx}]" if path else f"[{idx}]")
+        elif isinstance(obj, str) and "${" in obj:
+            # Solo advertir, no fallar (puede haber variables opcionales)
+            if "JWT_SECRET" in obj or "INTERNAL_SECRET" in obj:
+                print(f"⚠️  ADVERTENCIA: Variable crítica sin expandir en {path}: {obj}")
+    
+    check_critical_vars(kong_config)
     
     # Escribir el archivo de salida
     try:
