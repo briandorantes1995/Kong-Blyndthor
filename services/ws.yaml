@@ -1,6 +1,6 @@
 services:
   - name: ws
-    url: http://ws-service:4000
+    url: http://h8g4kws0880k4gowswwgwg88.138.197.203.18.sslip.io
     routes:
       - name: ws
         paths: ["/ws"]
