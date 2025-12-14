@@ -23,6 +23,7 @@ plugins:
         headers:
           - "X-Internal-Auth:${INTERNAL_SECRET}"
   # Aplicar header interno a SSE Metrics (sin JWT, solo header de Kong)
+  # Reescribe /sse/metrics a /metrics para el backend
   - name: request-transformer
     service: sse-metrics
     route: sse-metrics
@@ -30,3 +31,5 @@ plugins:
       add:
         headers:
           - "X-Internal-Auth:${INTERNAL_SECRET}"
+      replace:
+        uri: /metrics

@@ -24,6 +24,15 @@ services:
     paths:
     - /api/auth
     strip_path: true
+- name: sse-metrics
+  url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
+  retries: 3
+  routes:
+  - name: sse-metrics
+    paths:
+    - /sse/metrics
+    - /metrics
+    strip_path: false
 - name: sse
   url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
   retries: 3
@@ -31,14 +40,6 @@ services:
   - name: sse
     paths:
     - /sse
-    strip_path: true
-- name: sse-metrics
-  url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
-  retries: 3
-  routes:
-  - name: sse-metrics
-    paths:
-    - /metrics
     strip_path: true
 - name: ws
   url: http://h8g4kws0880k4gowswwgwg88.138.197.203.18.sslip.io
@@ -93,6 +94,8 @@ plugins:
     add:
       headers:
       - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
+    replace:
+      uri: /metrics
 - name: jwt
   service: api-main
   route: api-main

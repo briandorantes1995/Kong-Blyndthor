@@ -4,6 +4,6 @@ services:
     retries: 3
     routes:
       - name: sse-metrics
-        paths: ["/metrics"]
+        paths: ["/sse/metrics", "/metrics"]
         strip_path: true
 
