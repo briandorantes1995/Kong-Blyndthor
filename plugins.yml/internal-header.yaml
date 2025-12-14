@@ -14,3 +14,10 @@ plugins:
       add:
         headers:
           - "X-Internal-Auth:${INTERNAL_SECRET}"
+  # Aplicar header interno a SSE (necesario para validación en el servicio)
+  - name: request-transformer
+    service: sse
+    config:
+      add:
+        headers:
+          - "X-Internal-Auth:${INTERNAL_SECRET}"
