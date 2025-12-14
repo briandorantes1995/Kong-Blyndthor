@@ -3,13 +3,17 @@ plugins:
     service: api-main
     config:
       origins:
-        - https://tuweb.com
+        - https://fehura.net
+        - https://sticky.fehura.net
       methods:
         - GET
         - POST
         - PUT
         - DELETE
+        - PATCH
+        - OPTIONS
       headers:
         - Authorization
         - Content-Type
+        - X-Requested-With
       credentials: true
