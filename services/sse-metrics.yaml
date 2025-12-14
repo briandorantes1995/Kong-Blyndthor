@@ -1,0 +1,9 @@
+services:
+  - name: sse-metrics
+    url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
+    retries: 3
+    routes:
+      - name: sse-metrics
+        paths: ["/metrics"]
+        strip_path: true
+

@@ -32,6 +32,10 @@ services:
     paths:
     - /sse
     strip_path: true
+- name: sse-metrics
+  url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
+  retries: 3
+  routes:
   - name: sse-metrics
     paths:
     - /metrics
@@ -83,7 +87,7 @@ plugins:
       headers:
       - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
 - name: request-transformer
-  service: sse
+  service: sse-metrics
   route: sse-metrics
   config:
     add:

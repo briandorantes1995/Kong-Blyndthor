@@ -15,7 +15,6 @@ plugins:
         headers:
           - "X-Internal-Auth:${INTERNAL_SECRET}"
   # Aplicar header interno a SSE (necesario para validación en el servicio)
-  # Aplicado a ambas rutas: sse y sse-metrics
   - name: request-transformer
     service: sse
     route: sse
@@ -23,8 +22,9 @@ plugins:
       add:
         headers:
           - "X-Internal-Auth:${INTERNAL_SECRET}"
+  # Aplicar header interno a SSE Metrics (sin JWT, solo header de Kong)
   - name: request-transformer
-    service: sse
+    service: sse-metrics
     route: sse-metrics
     config:
       add:

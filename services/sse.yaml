@@ -6,6 +6,3 @@ services:
       - name: sse
         paths: ["/sse"]
         strip_path: true
-      - name: sse-metrics
-        paths: ["/metrics"]
-        strip_path: true
