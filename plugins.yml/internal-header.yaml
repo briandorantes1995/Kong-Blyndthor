@@ -1,9 +1,15 @@
 plugins:
-  # Aplicar header interno solo a api-main (rutas protegidas)
-  # api-public y auth no necesitan este header
+  # Aplicar header interno a api-main (rutas protegidas)
   - name: request-transformer
     service: api-main
     route: api-main
+    config:
+      add:
+        headers:
+          - "X-Internal-Auth:${INTERNAL_SECRET}"
+  # Aplicar header interno a WebSocket (necesario para validación en el servicio)
+  - name: request-transformer
+    service: ws
     config:
       add:
         headers:

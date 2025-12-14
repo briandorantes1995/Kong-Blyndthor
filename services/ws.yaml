@@ -3,9 +3,6 @@ services:
     url: http://h8g4kws0880k4gowswwgwg88.138.197.203.18.sslip.io
     retries: 3
     routes:
-      - name: ws
-        paths: ["/ws"]
-        strip_path: true
       - name: socketio
         paths: ["/socket.io"]
         strip_path: true

@@ -29,22 +29,9 @@ plugins:
         - jwt
       cookie_names:
         - jwt
-  # JWT para ruta /ws
-  - name: jwt
-    service: ws
-    route: ws
-    config:
-      key_claim_name: iss
-      claims_to_verify:
-        - exp
-      run_on_preflight: false
-      header_names:
-        - Authorization
-      uri_param_names:
-        - jwt
-      cookie_names:
-        - jwt
   # JWT para ruta /socket.io (Socket.IO)
+  # Socket.IO envía el token en auth.token, pero Kong necesita leerlo del query
+  # El cliente debe enviar el token como query parameter 'token' además de en auth.token
   - name: jwt
     service: ws
     route: socketio
@@ -57,5 +44,7 @@ plugins:
         - Authorization
       uri_param_names:
         - jwt
+        - token
+        - "auth[token]"
       cookie_names:
         - jwt
