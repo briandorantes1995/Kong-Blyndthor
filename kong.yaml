@@ -108,7 +108,6 @@ plugins:
     cookie_names:
     - jwt
 - name: jwt
-  service: sse
   route: sse
   config:
     key_claim_name: iss

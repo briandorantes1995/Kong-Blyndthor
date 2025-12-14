@@ -15,8 +15,8 @@ plugins:
       cookie_names:
         - jwt
   # JWT para ruta /sse (excluye /metrics)
+  # Aplicado solo a la ruta, no al servicio completo
   - name: jwt
-    service: sse
     route: sse
     config:
       key_claim_name: iss
