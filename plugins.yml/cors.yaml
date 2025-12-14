@@ -17,3 +17,16 @@ plugins:
         - Content-Type
         - X-Requested-With
       credentials: true
+  - name: cors
+    service: sse
+    config:
+      origins:
+        - https://fehura.net
+        - https://sticky.fehura.net
+      methods:
+        - GET
+        - OPTIONS
+      headers:
+        - Authorization
+        - Content-Type
+      credentials: true
