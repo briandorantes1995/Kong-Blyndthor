@@ -56,42 +56,84 @@ else
     echo "ℹ️  Configuración ya existe, omitiendo generación"
 fi
 
+# Validar configuración antes de iniciar
+echo "🔍 Validando configuración de Kong..."
+if command -v gosu >/dev/null 2>&1; then
+    VALIDATE_CMD="gosu kong kong config parse /etc/kong/kong.yaml"
+elif command -v su-exec >/dev/null 2>&1; then
+    VALIDATE_CMD="su-exec kong kong config parse /etc/kong/kong.yaml"
+else
+    VALIDATE_CMD="su -s /bin/sh kong -c 'kong config parse /etc/kong/kong.yaml'"
+fi
+
+if ! $VALIDATE_CMD > /dev/null 2>&1; then
+    echo "❌ Error: La configuración de Kong es inválida"
+    echo "Ejecutando validación con salida detallada:"
+    $VALIDATE_CMD || true
+    exit 1
+fi
+echo "✅ Configuración válida"
+
 # Limpiar sockets colgantes antes de iniciar (evita warnings)
 rm -f /usr/local/kong/*.sock 2>/dev/null || true
 
 # Cambiar al usuario kong para ejecutar Kong
 # Kong start inicia en modo daemon, necesitamos mantener el contenedor vivo
+echo "🚀 Iniciando Kong..."
 if command -v gosu >/dev/null 2>&1; then
-    gosu kong "$@" || exit $?
-    # Mantener el contenedor vivo monitoreando el proceso de Kong
-    echo "✅ Kong iniciado, monitoreando proceso..."
-    while true; do
-        if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
-            echo "⚠️  Proceso de Kong no encontrado, saliendo..."
-            exit 1
-        fi
-        sleep 10
-    done
+    if ! gosu kong "$@"; then
+        echo "❌ Error al iniciar Kong"
+        exit 1
+    fi
 elif command -v su-exec >/dev/null 2>&1; then
-    su-exec kong "$@" || exit $?
-    echo "✅ Kong iniciado, monitoreando proceso..."
-    while true; do
-        if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
-            echo "⚠️  Proceso de Kong no encontrado, saliendo..."
-            exit 1
-        fi
-        sleep 10
-    done
+    if ! su-exec kong "$@"; then
+        echo "❌ Error al iniciar Kong"
+        exit 1
+    fi
 else
     # Fallback: usar su
-    su -s /bin/sh kong -c "$*" || exit $?
-    echo "✅ Kong iniciado, monitoreando proceso..."
-    while true; do
-        if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
-            echo "⚠️  Proceso de Kong no encontrado, saliendo..."
-            exit 1
-        fi
-        sleep 10
-    done
+    if ! su -s /bin/sh kong -c "$*"; then
+        echo "❌ Error al iniciar Kong"
+        exit 1
+    fi
 fi
+
+# Esperar un momento para que Kong inicie completamente
+echo "⏳ Esperando que Kong inicie..."
+sleep 3
+
+# Verificar que Kong realmente está corriendo
+MAX_RETRIES=6
+RETRY_COUNT=0
+KONG_RUNNING=false
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if pgrep -f "nginx.*master" > /dev/null 2>&1; then
+        KONG_RUNNING=true
+        break
+    fi
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    echo "⏳ Esperando proceso de Kong... ($RETRY_COUNT/$MAX_RETRIES)"
+    sleep 2
+done
+
+if [ "$KONG_RUNNING" = false ]; then
+    echo "❌ Error: Kong no pudo iniciar correctamente"
+    echo "Revisando logs de error..."
+    if [ -f /usr/local/kong/logs/error.log ]; then
+        tail -50 /usr/local/kong/logs/error.log || true
+    fi
+    exit 1
+fi
+
+echo "✅ Kong iniciado correctamente, monitoreando proceso..."
+
+# Mantener el contenedor vivo monitoreando el proceso de Kong
+while true; do
+    if ! pgrep -f "nginx.*master" > /dev/null 2>&1; then
+        echo "⚠️  Proceso de Kong no encontrado, saliendo..."
+        exit 1
+    fi
+    sleep 10
+done
 
