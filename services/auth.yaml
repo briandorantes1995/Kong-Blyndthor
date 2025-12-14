@@ -1,6 +1,10 @@
 services:
   - name: auth
     url: http://api-main:3000
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 5
     routes:
       - name: auth
         paths: ["/api/auth"]

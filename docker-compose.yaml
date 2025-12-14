@@ -14,6 +14,13 @@ services:
       KONG_ADMIN_LISTEN: "0.0.0.0:8001"
       KONG_LOG_LEVEL: info
       KONG_NGINX_WORKER_PROCESSES: auto
+      # Timeouts globales (en milisegundos)
+      KONG_NGINX_PROXY_CONNECT_TIMEOUT: "60000"
+      KONG_NGINX_PROXY_SEND_TIMEOUT: "60000"
+      KONG_NGINX_PROXY_READ_TIMEOUT: "60000"
+      # Keepalive para mejor rendimiento
+      KONG_NGINX_HTTP_KEEPALIVE_REQUESTS: "100"
+      KONG_NGINX_HTTP_KEEPALIVE_TIMEOUT: "60"
       INTERNAL_SECRET: ${INTERNAL_SECRET}
       JWT_SECRET: ${JWT_SECRET}
     ports:
