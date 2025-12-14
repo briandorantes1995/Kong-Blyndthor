@@ -3,7 +3,8 @@ plugins:
   # api-public y auth no necesitan este header
   - name: request-transformer
     service: api-main
+    route: api-main
     config:
       add:
         headers:
-          - "X-Internal-Auth: ${INTERNAL_SECRET}"
+          - "X-Internal-Auth:${INTERNAL_SECRET}"

@@ -1,0 +1,23 @@
+plugins:
+  # Cache para endpoints públicos que no cambian frecuentemente
+  - name: proxy-cache
+    service: api-public
+    route: api-public
+    config:
+      response_code:
+        - 200
+        - 301
+        - 404
+      content_type:
+        - "application/json"
+        - "text/plain"
+      cache_ttl: 60
+      storage_ttl: 300
+      strategy: memory
+      memory:
+        dictionary_name: kong_db_cache
+      cache_control: false
+      request_method:
+        - GET
+        - HEAD
+
