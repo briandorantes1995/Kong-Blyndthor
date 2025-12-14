@@ -1,28 +1,32 @@
 _format_version: '3.0'
 services:
 - name: api-public
-  url: http://api-main:3000
+  url: http://k0k4ccws8c8oc4c44kwowksk.138.197.203.18.sslip.io/public
+  retries: 2
   routes:
   - name: api-public
     paths:
     - /api/public
-    strip_path: false
+    strip_path: true
 - name: api-main
-  url: http://api-main:3000
+  url: http://k0k4ccws8c8oc4c44kwowksk.138.197.203.18.sslip.io
+  retries: 5
   routes:
   - name: api-main
     paths:
     - /api
     strip_path: true
 - name: auth
-  url: http://api-main:3000
+  url: http://k0k4ccws8c8oc4c44kwowksk.138.197.203.18.sslip.io/auth
+  retries: 2
   routes:
   - name: auth
     paths:
     - /api/auth
-    strip_path: false
+    strip_path: true
 - name: sse
-  url: http://sse-service:5000
+  url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
+  retries: 3
   routes:
   - name: sse
     paths:
@@ -34,6 +38,7 @@ services:
     strip_path: true
 - name: ws
   url: http://h8g4kws0880k4gowswwgwg88.138.197.203.18.sslip.io
+  retries: 3
   routes:
   - name: ws
     paths:
@@ -66,6 +71,20 @@ plugins:
     credentials: true
 - name: request-transformer
   service: api-main
+  config:
+    add:
+      headers:
+      - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
+- name: request-transformer
+  service: sse
+  route: sse
+  config:
+    add:
+      headers:
+      - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
+- name: request-transformer
+  service: sse
+  route: sse-metrics
   config:
     add:
       headers:
