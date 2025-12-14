@@ -1,8 +1,8 @@
 services:
   - name: api-public
-    url: http://k0k4ccws8c8oc4c44kwowksk.138.197.203.18.sslip.io
+    url: http://k0k4ccws8c8oc4c44kwowksk.138.197.203.18.sslip.io/public
     retries: 5
     routes:
       - name: api-public
         paths: ["/api/public"]
-        strip_path: false
+        strip_path: true
