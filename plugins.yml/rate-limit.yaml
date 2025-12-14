@@ -1,5 +1,14 @@
 plugins:
+  # Rate limiting global
+  # IMPORTANTE: 
+  # - Para rutas con JWT: se identifica por consumer (cada conductor tiene su límite)
+  # - Para rutas públicas: se identifica por IP
+  # - WebSockets: NO se limitan (solo cuenta el handshake inicial, ~1 request)
+  # - Tracking de ubicación: Si usas JWT, cada conductor tiene 200 req/min independiente
   - name: rate-limiting
     config:
       minute: 200
+      hour: 10000
       policy: local
+      # Kong usa consumer automáticamente si hay autenticación, IP si no
+      hide_client_headers: false
