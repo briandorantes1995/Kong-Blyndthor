@@ -1,9 +1,6 @@
 services:
   - name: sse
     url: http://sse-service:5000
-    connect_timeout: 60000
-    write_timeout: 300000
-    read_timeout: 300000
     retries: 3
     routes:
       - name: sse

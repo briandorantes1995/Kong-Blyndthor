@@ -1,9 +1,6 @@
 services:
   - name: ws
     url: http://h8g4kws0880k4gowswwgwg88.138.197.203.18.sslip.io
-    connect_timeout: 60000
-    write_timeout: 300000
-    read_timeout: 300000
     retries: 3
     routes:
       - name: ws
