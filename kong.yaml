@@ -64,12 +64,30 @@ plugins:
   service: api-main
   config:
     origins:
-    - https://tuweb.com
+    - https://fehura.net
+    - https://sticky.fehura.net
     methods:
     - GET
     - POST
     - PUT
     - DELETE
+    - PATCH
+    - OPTIONS
+    headers:
+    - Authorization
+    - Content-Type
+    - X-Requested-With
+    credentials: true
+- name: cors
+  service: ws
+  config:
+    origins:
+    - https://fehura.net
+    - https://sticky.fehura.net
+    methods:
+    - GET
+    - POST
+    - OPTIONS
     headers:
     - Authorization
     - Content-Type
@@ -96,6 +114,12 @@ plugins:
       - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
     replace:
       uri: /metrics
+- name: request-transformer
+  service: ws
+  config:
+    add:
+      headers:
+      - 'X-Internal-Auth: rkgWV-5i9FJ3DdWli7rpYpU-sWUG_Pvc5MvZIzUFQzQ'
 - name: jwt
   service: api-main
   route: api-main
@@ -112,34 +136,6 @@ plugins:
     - jwt
 - name: jwt
   route: sse
-  config:
-    key_claim_name: iss
-    claims_to_verify:
-    - exp
-    run_on_preflight: false
-    header_names:
-    - Authorization
-    uri_param_names:
-    - jwt
-    cookie_names:
-    - jwt
-- name: jwt
-  service: ws
-  route: ws
-  config:
-    key_claim_name: iss
-    claims_to_verify:
-    - exp
-    run_on_preflight: false
-    header_names:
-    - Authorization
-    uri_param_names:
-    - jwt
-    cookie_names:
-    - jwt
-- name: jwt
-  service: ws
-  route: socketio
   config:
     key_claim_name: iss
     claims_to_verify:

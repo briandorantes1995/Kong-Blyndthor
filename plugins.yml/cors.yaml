@@ -30,3 +30,17 @@ plugins:
         - Authorization
         - Content-Type
       credentials: true
+  - name: cors
+    service: ws
+    config:
+      origins:
+        - https://fehura.net
+        - https://sticky.fehura.net
+      methods:
+        - GET
+        - POST
+        - OPTIONS
+      headers:
+        - Authorization
+        - Content-Type
+      credentials: true
