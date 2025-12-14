@@ -1,6 +1,6 @@
 services:
   - name: sse
-    url: http://sse-service:5000
+    url: https://sse-microservice-d1a7d0bd71d0.herokuapp.com
     retries: 3
     routes:
       - name: sse

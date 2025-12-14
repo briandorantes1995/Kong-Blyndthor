@@ -1,6 +1,6 @@
 services:
   - name: auth
-    url: http://api-main:3000
+    url: http://k0k4ccws8c8oc4c44kwowksk.138.197.203.18.sslip.io
     retries: 5
     routes:
       - name: auth
